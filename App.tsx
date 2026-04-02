@@ -34,7 +34,7 @@ const GoldHeader: React.FC<{
             </svg>
           </div>
           <div>
-            <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">ZEGO <span className="text-emerald-500">STUDIO</span></h1>
+            <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">ZEGO <span className="text-emerald-500">Tech</span></h1>
             <p className="text-[7px] font-black text-slate-400 dark:text-emerald-400/60 uppercase tracking-[0.3em] mt-1">Production • Premium Localizer</p>
           </div>
         </div>
