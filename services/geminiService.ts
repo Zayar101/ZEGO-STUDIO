@@ -28,17 +28,22 @@ export class GeminiService {
       const errorMsg = (error.message || "").toLowerCase();
       const isRetryable = 
         errorMsg.includes("429") || 
+        errorMsg.includes("503") ||
+        errorMsg.includes("504") ||
         errorMsg.includes("resource_exhausted") || 
         errorMsg.includes("500") || 
         errorMsg.includes("quota") ||
         errorMsg.includes("overloaded") ||
+        errorMsg.includes("unavailable") ||
         errorMsg.includes("service unavailable") ||
-        errorMsg.includes("deadline_exceeded");
+        errorMsg.includes("deadline_exceeded") ||
+        errorMsg.includes("internal error");
       
       if (retries > 0 && isRetryable) {
-        const jitter = Math.random() * 2000;
-        console.warn(`ZEGOTECH: API Quota/Error encountered. Retrying in ${((baseDelay + jitter) / 1000).toFixed(1)}s... (${retries} retries left)`);
-        await new Promise(resolve => setTimeout(resolve, baseDelay + jitter));
+        const jitter = Math.random() * 3000;
+        const delay = baseDelay + jitter;
+        console.warn(`ZEGOTECH: API Quota/Server Busy (Error: ${errorMsg}). Retrying in ${(delay / 1000).toFixed(1)}s... (${retries} retries left)`);
+        await new Promise(resolve => setTimeout(resolve, delay));
         return this.retry(fn, retries - 1, baseDelay * 1.5);
       }
       throw error;
