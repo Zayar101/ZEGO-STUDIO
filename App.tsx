@@ -372,47 +372,35 @@ export default function App() {
                 <div className="space-y-2 text-left">
                   <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] ml-1">Enter Gemini API Key</label>
                   <input 
+                    id="manual-api-key-input"
                     type="password"
                     placeholder="Paste your API Key here..."
                     className="w-full p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200 dark:border-emerald-500/10 font-mono text-xs focus:ring-2 focus:ring-emerald-500 transition-all outline-none dark:text-white"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        saveManualKey((e.target as HTMLInputElement).value);
-                      }
-                    }}
-                    onBlur={(e) => saveManualKey(e.target.value)}
+                    defaultValue={manualKey}
                   />
                 </div>
 
-                <div className="relative py-2">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200 dark:border-white/5"></div></div>
-                  <div className="relative flex justify-center text-[8px] font-black uppercase tracking-widest text-slate-400 bg-white dark:bg-[#020617] px-2">OR</div>
-                </div>
-
                 <button 
-                  onClick={async () => {
-                    try {
-                      // @ts-ignore
-                      if (window.aistudio) {
-                        // @ts-ignore
-                        await window.aistudio.openSelectKey();
-                        // @ts-ignore
-                        if (await window.aistudio.hasSelectedApiKey()) {
-                          setNeedsKey(false);
-                        }
-                      } else {
-                        window.open("https://aistudio.google.com/app/apikey", "_blank");
-                      }
-                    } catch (e) {
-                      console.error("Failed to open key selector", e);
+                  onClick={() => {
+                    const input = document.getElementById('manual-api-key-input') as HTMLInputElement;
+                    if (input && input.value.trim()) {
+                      saveManualKey(input.value);
                     }
                   }}
-                  className="w-full py-4 bg-emerald-600/10 text-emerald-500 border border-emerald-500/20 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                  {/* @ts-ignore */}
-                  {window.aistudio ? "Connect via AI Studio" : "Get Free API Key"}
+                  <Check className="w-5 h-5" />
+                  Start Application
                 </button>
+
+                <div className="pt-2 text-center">
+                  <button 
+                    onClick={() => window.open("https://aistudio.google.com/app/apikey", "_blank")}
+                    className="text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:underline transition-all"
+                  >
+                    Get Free API Key from Google
+                  </button>
+                </div>
               </div>
             </div>
           </div>
