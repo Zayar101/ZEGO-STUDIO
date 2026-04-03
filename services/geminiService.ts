@@ -63,9 +63,13 @@ export class GeminiService {
     return segments;
   }
 
+  private getApiKey(): string {
+    return process.env.API_KEY || localStorage.getItem('zegotech_manual_api_key') || "";
+  }
+
   async processVideoFull(fileBase64: string, mimeType: string, targetLanguage: TargetLanguage, durationSeconds: number): Promise<{ text: string, metadata: VideoMetadata & { english_filename_base: string } }> {
     return this.retry(async () => {
-      const apiKey = process.env.API_KEY;
+      const apiKey = this.getApiKey();
       if (!apiKey) throw new Error("API_KEY_MISSING: Please connect your own Gemini API Key to use this service.");
       const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
@@ -139,7 +143,7 @@ export class GeminiService {
   async generateThumbnailSequential(title: string): Promise<{ wide: string, portrait: string }> {
     try {
       const portrait = await this.retry(async () => {
-        const apiKey = process.env.API_KEY;
+        const apiKey = this.getApiKey();
         if (!apiKey) throw new Error("API_KEY_MISSING");
         const ai = new GoogleGenAI({ apiKey });
         const res = await ai.models.generateContent({
@@ -169,7 +173,7 @@ export class GeminiService {
       if (onProgress) onProgress(i + 1, segments.length);
       
       const audioBase64 = await this.retry(async () => {
-        const apiKey = process.env.API_KEY;
+        const apiKey = this.getApiKey();
         if (!apiKey) throw new Error("API_KEY_MISSING");
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({

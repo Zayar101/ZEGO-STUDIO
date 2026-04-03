@@ -106,6 +106,7 @@ export default function App() {
   const [showCoffee, setShowCoffee] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [needsKey, setNeedsKey] = useState(false);
+  const [manualKey, setManualKey] = useState(() => localStorage.getItem('zegotech_manual_api_key') || '');
 
   const size = 160;
   const radius = 70;
@@ -114,16 +115,36 @@ export default function App() {
   useEffect(() => {
     const checkKey = async () => {
       try {
+        // First check manual key
+        if (manualKey) {
+          setNeedsKey(false);
+          return;
+        }
+
+        // Then check AI Studio platform key
         // @ts-ignore
         if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
+          setNeedsKey(true);
+        } else if (!window.aistudio && !manualKey) {
+          // On custom domain without manual key
           setNeedsKey(true);
         }
       } catch (e) {
         console.error("Key check failed", e);
+        if (!manualKey) setNeedsKey(true);
       }
     };
     checkKey();
-  }, []);
+  }, [manualKey]);
+
+  const saveManualKey = (key: string) => {
+    const trimmedKey = key.trim();
+    if (trimmedKey) {
+      localStorage.setItem('zegotech_manual_api_key', trimmedKey);
+      setManualKey(trimmedKey);
+      setNeedsKey(false);
+    }
+  };
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -348,32 +369,50 @@ export default function App() {
               </div>
               
               <div className="space-y-4">
+                <div className="space-y-2 text-left">
+                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] ml-1">Enter Gemini API Key</label>
+                  <input 
+                    type="password"
+                    placeholder="Paste your API Key here..."
+                    className="w-full p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200 dark:border-emerald-500/10 font-mono text-xs focus:ring-2 focus:ring-emerald-500 transition-all outline-none dark:text-white"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        saveManualKey((e.target as HTMLInputElement).value);
+                      }
+                    }}
+                    onBlur={(e) => saveManualKey(e.target.value)}
+                  />
+                </div>
+
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200 dark:border-white/5"></div></div>
+                  <div className="relative flex justify-center text-[8px] font-black uppercase tracking-widest text-slate-400 bg-white dark:bg-[#020617] px-2">OR</div>
+                </div>
+
                 <button 
                   onClick={async () => {
                     try {
                       // @ts-ignore
-                      await window.aistudio.openSelectKey();
-                      // @ts-ignore
-                      if (await window.aistudio.hasSelectedApiKey()) {
-                        setNeedsKey(false);
+                      if (window.aistudio) {
+                        // @ts-ignore
+                        await window.aistudio.openSelectKey();
+                        // @ts-ignore
+                        if (await window.aistudio.hasSelectedApiKey()) {
+                          setNeedsKey(false);
+                        }
+                      } else {
+                        window.open("https://aistudio.google.com/app/apikey", "_blank");
                       }
                     } catch (e) {
                       console.error("Failed to open key selector", e);
                     }
                   }}
-                  className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-emerald-600/10 text-emerald-500 border border-emerald-500/20 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center gap-3"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                  Connect API Key
+                  {/* @ts-ignore */}
+                  {window.aistudio ? "Connect via AI Studio" : "Get Free API Key"}
                 </button>
-                <a 
-                  href="https://aistudio.google.com/app/apikey" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="block text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:underline"
-                >
-                  Get Free API Key from Google
-                </a>
               </div>
             </div>
           </div>
@@ -625,7 +664,7 @@ export default function App() {
             <div className="space-y-6 text-sm md:text-base text-slate-600 dark:text-slate-400 font-['Padauk'] leading-relaxed">
               <div className="space-y-2">
                 <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၁) - API Key ထည့်သွင်းခြင်း</h4>
-                <p>ဤ App ကို အသုံးပြုရန် သင်၏ ကိုယ်ပိုင် Gemini API Key လိုအပ်ပါသည်။ App စတင်ချိန်တွင် ပေါ်လာသော "Connect API Key" ခလုတ်ကို နှိပ်ပြီး သင်၏ Key ကို ချိတ်ဆက်ပါ။ Key မရှိသေးပါက "Get Free API Key" link မှတစ်ဆင့် အခမဲ့ ရယူနိုင်ပါသည်။</p>
+                <p>ဤ App ကို အသုံးပြုရန် သင်၏ ကိုယ်ပိုင် Gemini API Key လိုအပ်ပါသည်။ App စတင်ချိန်တွင် ပေါ်လာသော Input Box တွင် သင်၏ Key ကို ရိုက်ထည့်ပါ သို့မဟုတ် "Connect via AI Studio" ခလုတ်ကို နှိပ်ပြီး သင်၏ Key ကို ချိတ်ဆက်ပါ။ Key မရှိသေးပါက "Get Free API Key" link မှတစ်ဆင့် အခမဲ့ ရယူနိုင်ပါသည်။</p>
               </div>
               
               <div className="space-y-2">
@@ -642,6 +681,18 @@ export default function App() {
                 <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၄) - ရလဒ်များ ရယူခြင်း</h4>
                 <p>Neural Engine မှ အလိုအလျောက် ဘာသာပြန်ပြီးပါက ဘာသာပြန်စာသား၊ အသံဖိုင် (Premium WAV) နှင့် Subtitle ဖိုင်များကို "Download Bundle ZIP" ခလုတ်ဖြင့် တစ်ခါတည်း ဒေါင်းလုဒ် ရယူနိုင်ပါသည်။</p>
               </div>
+
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('zegotech_manual_api_key');
+                  setManualKey('');
+                  setNeedsKey(true);
+                  setShowHelp(false);
+                }}
+                className="w-full py-3 bg-rose-500/10 text-rose-500 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all mt-4"
+              >
+                Reset API Key (Key ကို ပြန်လည်ပြင်ဆင်ရန်)
+              </button>
             </div>
             
             <div className="pt-6 border-t dark:border-white/5 text-center">
