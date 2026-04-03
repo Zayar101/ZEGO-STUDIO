@@ -63,7 +63,7 @@ export class GeminiService {
 
   async processVideoFull(fileBase64: string, mimeType: string, targetLanguage: TargetLanguage, durationSeconds: number): Promise<{ text: string, metadata: VideoMetadata & { english_filename_base: string } }> {
     return this.retry(async () => {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: {
@@ -135,7 +135,7 @@ export class GeminiService {
   async generateThumbnailSequential(title: string): Promise<{ wide: string, portrait: string }> {
     try {
       const portrait = await this.retry(async () => {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
         const res = await ai.models.generateContent({
           model: 'gemini-2.5-flash-image',
           contents: {
@@ -149,7 +149,7 @@ export class GeminiService {
 
       return { wide: "", portrait };
     } catch (e) {
-      console.warn("Gemini Studio: Thumbnail skipped to prioritize primary output.", e);
+      console.warn("ZEGOTECH: Thumbnail skipped to prioritize primary output.", e);
       return { wide: "", portrait: "" };
     }
   }
@@ -163,7 +163,7 @@ export class GeminiService {
       if (onProgress) onProgress(i + 1, segments.length);
       
       const audioBase64 = await this.retry(async () => {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
         const response = await ai.models.generateContent({
           model: "gemini-2.5-flash-preview-tts",
           contents: [{ parts: [{ text: segments[i] }] }],

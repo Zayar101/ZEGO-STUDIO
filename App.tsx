@@ -34,7 +34,7 @@ const GoldHeader: React.FC<{
             </svg>
           </div>
           <div>
-            <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">ZEGO <span className="text-emerald-500">Tech</span></h1>
+            <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">ZEGO <span className="text-emerald-500">TECH</span></h1>
             <p className="text-[7px] font-black text-slate-400 dark:text-emerald-400/60 uppercase tracking-[0.3em] mt-1">Production • Premium Localizer</p>
           </div>
         </div>
@@ -210,7 +210,7 @@ export default function App() {
       });
       setCooldown(COOLDOWN_SECONDS);
     } catch (err: any) {
-      console.error("Studio Malfunction Details:", err);
+      console.error("System Malfunction Details:", err);
       setResult({ ...result, status: 'error', error: err.message || "A production error occurred. Please try again." });
     } finally {
       e.target.value = "";
@@ -323,7 +323,7 @@ export default function App() {
               </div>
               <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-slate-900 dark:text-white uppercase leading-none">
                 Neural <span className="text-emerald-500">Master.</span><br/>
-                <span className="text-emerald-500/10 dark:text-emerald-500/5">Studio Quality.</span>
+                <span className="text-emerald-500/10 dark:text-emerald-500/5">ZEGOTECH Quality.</span>
               </h2>
               <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm md:text-base font-medium opacity-80 leading-relaxed">
                 100% accurate AI translation and studio-grade WAV narration for professional video localizers.
@@ -348,7 +348,7 @@ export default function App() {
 
               <div className="space-y-4 pt-2">
                 <div className="flex justify-between items-center px-1">
-                  <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em]">Narrator Speed (အမြန်နှုန်း)</label>
+                  <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em]">Narrator Speed</label>
                   <span className="text-emerald-500 font-black text-xs tabular-nums">{options.speed.toFixed(1)}x</span>
                 </div>
                 <div className="px-1">
@@ -407,7 +407,7 @@ export default function App() {
               <div className="bg-slate-900/95 dark:bg-black/40 backdrop-blur-xl text-emerald-400 font-mono p-8 rounded-3xl border border-white/5 shadow-2xl space-y-5">
                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
                     <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest">
-                       <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> STUDIO ACTIVE
+                       <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> ZEGOTECH ACTIVE
                     </div>
                     <span className="text-[9px] text-white/30">V5.7-PRECISION</span>
                  </div>
@@ -427,10 +427,34 @@ export default function App() {
                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             </div>
             <div className="text-center space-y-2 px-6">
-               <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Studio Malfunction</h3>
-               <p className="text-slate-500 max-w-md mx-auto text-sm font-medium leading-relaxed">{result.error}</p>
+               <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">System Malfunction</h3>
+               <div className="text-slate-500 max-w-md mx-auto text-sm font-medium leading-relaxed">
+                 {result.error?.includes('API key not valid') ? (
+                   <div className="space-y-4">
+                     <p>Invalid or missing Gemini API Key.</p>
+                     <button 
+                       onClick={async () => {
+                         try {
+                           // @ts-ignore
+                           await window.aistudio.openSelectKey();
+                           resetProject();
+                         } catch (e) {
+                           console.error("Failed to open key selector", e);
+                         }
+                       }}
+                       className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+                     >
+                       Select API Key
+                     </button>
+                   </div>
+                 ) : (
+                   <p>{result.error}</p>
+                 )}
+               </div>
             </div>
-            <button onClick={resetProject} className="px-10 py-4 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 transition-all">Discard & Restart</button>
+            {!result.error?.includes('API key not valid') && (
+              <button onClick={resetProject} className="px-10 py-4 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 transition-all">Discard & Restart</button>
+            )}
           </div>
         )}
 
@@ -525,16 +549,16 @@ export default function App() {
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center border-b dark:border-white/5 pb-6">
-              <h3 className="text-2xl font-black uppercase tracking-tight dark:text-white">Studio Guide</h3>
+              <h3 className="text-2xl font-black uppercase tracking-tight dark:text-white">ZEGOTECH Guide</h3>
               <button onClick={() => setShowHelp(false)} className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-500 transition-colors">
                 <X className="w-6 h-6" />
               </button>
             </div>
             
             <div className="space-y-6 text-sm md:text-base text-slate-600 dark:text-slate-400 font-['Padauk'] leading-relaxed">
-              <p>၁။ ဗီဒီယိုတင်ပြီးပါက Neural Engine မှ အလိုအလျောက် ဘာသာပြန်ခြင်းနှင့် အသံသွင်းခြင်းကို ပြိုင်တည်းလုပ်ဆောင်ပါမည်။</p>
-              <p>၂။ Turbo Mode ကြောင့် ပုံမှန်ထက် ၃ ဆ ပိုမြန်အောင် စီမံထားပါသည်။</p>
-              <p>၃။ အသံဖိုင်ကို အရည်အသွေးအမြင့်ဆုံး Studio WAV format ဖြင့် တိုက်ရိုက်ထုတ်လုပ်ပေးမည်ဖြစ်သောကြောင့် ၁၀၀% အဆင်ပြေစေပါသည်။</p>
+              <p>1. Once the video is uploaded, the Neural Engine will automatically perform translation and voiceover simultaneously.</p>
+              <p>2. Turbo Mode ensures it is 3x faster than usual.</p>
+              <p>3. The audio file will be produced directly in the highest quality Premium WAV format, ensuring 100% satisfaction.</p>
             </div>
             
             <div className="pt-6 border-t dark:border-white/5 text-center">
