@@ -9,7 +9,9 @@ export enum VoiceName {
 export enum TargetLanguage {
   BURMESE = 'Burmese',
   ENGLISH = 'English',
-  THAI = 'Thai'
+  THAI = 'Thai',
+  CHINESE = 'Chinese',
+  KOREAN = 'Korean'
 }
 
 export enum SpeakerType {

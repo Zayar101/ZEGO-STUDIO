@@ -105,10 +105,25 @@ export default function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [showCoffee, setShowCoffee] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [needsKey, setNeedsKey] = useState(false);
 
   const size = 160;
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
+
+  useEffect(() => {
+    const checkKey = async () => {
+      try {
+        // @ts-ignore
+        if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
+          setNeedsKey(true);
+        }
+      } catch (e) {
+        console.error("Key check failed", e);
+      }
+    };
+    checkKey();
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -182,6 +197,9 @@ export default function App() {
       const data = await geminiService.processVideoFull(base64, file.type, options.targetLanguage, vidDuration);
       
       if (!data || !data.text) throw new Error("AI Processing Failure: No text script generated.");
+
+      // Small delay to avoid hitting API rate limits too quickly
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       setProcessingStep('3/3: LOSSLESS PRODUCTION');
       setSubProgress('Generating high-fidelity audio...');
@@ -314,8 +332,55 @@ export default function App() {
       />
 
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-6 py-6 overflow-x-hidden">
-        {result.status === 'idle' && (
+        {needsKey ? (
           <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 animate-in">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900/40 backdrop-blur-3xl rounded-[2.5rem] p-10 border border-slate-200/40 dark:border-emerald-500/10 shadow-2xl text-center space-y-8">
+              <div className="w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto ring-4 ring-emerald-500/5">
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                </svg>
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-2xl font-black uppercase tracking-tight dark:text-white">API SETUP NEEDED</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                  To ensure the best performance and security, please connect your own Gemini API Key. This app uses your key to process audio and visuals.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <button 
+                  onClick={async () => {
+                    try {
+                      // @ts-ignore
+                      await window.aistudio.openSelectKey();
+                      // @ts-ignore
+                      if (await window.aistudio.hasSelectedApiKey()) {
+                        setNeedsKey(false);
+                      }
+                    } catch (e) {
+                      console.error("Failed to open key selector", e);
+                    }
+                  }}
+                  className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                  Connect API Key
+                </button>
+                <a 
+                  href="https://aistudio.google.com/app/apikey" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:underline"
+                >
+                  Get Free API Key from Google
+                </a>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {result.status === 'idle' && (
+              <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 animate-in">
             <div className="text-center space-y-4 px-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-emerald-500/20 mb-2">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -333,7 +398,7 @@ export default function App() {
             <div className="w-full max-w-3xl bg-white dark:bg-slate-900/40 backdrop-blur-3xl rounded-[2.5rem] p-6 md:p-10 border border-slate-200/40 dark:border-emerald-500/10 shadow-2xl space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="text-left space-y-3">
-                  <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em] ml-1">Market Locality</label>
+                  <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em] ml-1">Choose Language</label>
                   <select className="w-full p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200 dark:border-emerald-500/10 font-bold text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none" value={options.targetLanguage} onChange={e => setOptions({...options, targetLanguage: e.target.value as TargetLanguage})}>
                     {Object.values(TargetLanguage).map(l => <option key={l} value={l}>{l}</option>)}
                   </select>
@@ -537,7 +602,9 @@ export default function App() {
             </div>
           </div>
         )}
-      </main>
+      </>
+    )}
+  </main>
 
       {showHelp && (
         <div 

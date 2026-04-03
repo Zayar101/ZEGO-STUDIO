@@ -21,7 +21,7 @@ export class GeminiService {
     }
   }
 
-  private async retry<T>(fn: () => Promise<T>, retries = 5, baseDelay = 3000): Promise<T> {
+  private async retry<T>(fn: () => Promise<T>, retries = 10, baseDelay = 5000): Promise<T> {
     try {
       return await fn();
     } catch (error: any) {
@@ -32,10 +32,12 @@ export class GeminiService {
         errorMsg.includes("500") || 
         errorMsg.includes("quota") ||
         errorMsg.includes("overloaded") ||
-        errorMsg.includes("service unavailable");
+        errorMsg.includes("service unavailable") ||
+        errorMsg.includes("deadline_exceeded");
       
       if (retries > 0 && isRetryable) {
-        const jitter = Math.random() * 1000;
+        const jitter = Math.random() * 2000;
+        console.warn(`ZEGOTECH: API Quota/Error encountered. Retrying in ${((baseDelay + jitter) / 1000).toFixed(1)}s... (${retries} retries left)`);
         await new Promise(resolve => setTimeout(resolve, baseDelay + jitter));
         return this.retry(fn, retries - 1, baseDelay * 1.5);
       }
@@ -63,7 +65,7 @@ export class GeminiService {
 
   async processVideoFull(fileBase64: string, mimeType: string, targetLanguage: TargetLanguage, durationSeconds: number): Promise<{ text: string, metadata: VideoMetadata & { english_filename_base: string } }> {
     return this.retry(async () => {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: {
@@ -135,7 +137,7 @@ export class GeminiService {
   async generateThumbnailSequential(title: string): Promise<{ wide: string, portrait: string }> {
     try {
       const portrait = await this.retry(async () => {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY });
         const res = await ai.models.generateContent({
           model: 'gemini-2.5-flash-image',
           contents: {
@@ -163,7 +165,7 @@ export class GeminiService {
       if (onProgress) onProgress(i + 1, segments.length);
       
       const audioBase64 = await this.retry(async () => {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY });
         const response = await ai.models.generateContent({
           model: "gemini-2.5-flash-preview-tts",
           contents: [{ parts: [{ text: segments[i] }] }],
