@@ -90,7 +90,7 @@ export default function App() {
     voice: VoiceName.CHARON,
     pitch: 'normal',
     targetLanguage: TargetLanguage.BURMESE,
-    speed: 2.0 
+    speed: 1.0 
   });
   
   const [processingStep, setProcessingStep] = useState<string>('');
@@ -601,7 +601,7 @@ export default function App() {
                    <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.4em] text-center">CINEMATIC POSTER</h3>
                    <div className="aspect-[9/16] bg-slate-950 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-slate-100 dark:ring-slate-800/50 max-w-[220px] mx-auto transition-transform hover:scale-[1.02]">
                       {result.thumbnailPortrait ? (
-                        <img src={result.thumbnailPortrait} className="w-full h-full object-cover" alt="Production Poster" />
+                        <img src={result.thumbnailPortrait} className="w-full h-full object-cover" alt="Production Poster" referrerPolicy="no-referrer" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500 font-mono text-[9px] bg-slate-900 italic text-center px-4 uppercase tracking-tighter">Poster Unavailable</div>
                       )}
@@ -652,7 +652,7 @@ export default function App() {
             <div className="space-y-6 text-sm md:text-base text-slate-600 dark:text-slate-400 font-['Padauk'] leading-relaxed">
               <div className="space-y-2">
                 <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၁) - API Key ထည့်သွင်းခြင်း</h4>
-                <p>ဤ App ကို အသုံးပြုရန် သင်၏ ကိုယ်ပိုင် Gemini API Key လိုအပ်ပါသည်။ App စတင်ချိန်တွင် ပေါ်လာသော Input Box တွင် သင်၏ Key ကို ရိုက်ထည့်ပါ သို့မဟုတ် "Connect via AI Studio" ခလုတ်ကို နှိပ်ပြီး သင်၏ Key ကို ချိတ်ဆက်ပါ။ Key မရှိသေးပါက "Get Free API Key" link မှတစ်ဆင့် အခမဲ့ ရယူနိုင်ပါသည်။</p>
+                <p>ဤ App ကို အသုံးပြုရန် သင်၏ ကိုယ်ပိုင် Gemini API Key လိုအပ်ပါသည်။ App စတင်ချိန်တွင် ပေါ်လာသော Input Box တွင် သင်၏ Key ကို ရိုက်ထည့်ပြီး "Start Application" ခလုတ်ကို နှိပ်ပါ။ Key မရှိသေးပါက အောက်ခြေရှိ "Get Free API Key from Google" link မှတစ်ဆင့် အခမဲ့ ရယူနိုင်ပါသည်။</p>
               </div>
               
               <div className="space-y-2">
@@ -662,7 +662,7 @@ export default function App() {
 
               <div className="space-y-2">
                 <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၃) - ဘာသာစကားနှင့် အသံရွေးချယ်ခြင်း</h4>
-                <p>"Choose Language" တွင် မိမိအလိုရှိသော ဘာသာစကားကို ရွေးချယ်ပါ။ "Voice Identity" တွင် အသံအမျိုးအစားကို ရွေးချယ်နိုင်ပြီး "Narrator Speed" တွင် အသံထွက်နှုန်းကို စိတ်ကြိုက် ချိန်ညှိနိုင်ပါသည်။</p>
+                <p>"Choose Language" တွင် မိမိအလိုရှိသော ဘာသာစကားကို ရွေးချယ်ပါ။ "Voice Identity" တွင် အသံအမျိုးအစားကို ရွေးချယ်နိုင်ပြီး "Narrator Speed" တွင် အသံထွက်နှုန်းကို စိတ်ကြိုက် ချိန်ညှိနိုင်ပါသည်။ (ယခုအခါ ပုံမှန်အမြန်နှုန်း 1x ဖြင့် အလိုအလျောက် သတ်မှတ်ပေးထားပါသည်။)</p>
               </div>
 
               <div className="space-y-2">

@@ -164,7 +164,7 @@ export class GeminiService {
 
       return { wide: "", portrait };
     } catch (e) {
-      console.warn("ZEGOTECH: Thumbnail skipped to prioritize primary output.", e);
+      console.error("ZEGOTECH: Thumbnail generation failed.", e);
       return { wide: "", portrait: "" };
     }
   }
