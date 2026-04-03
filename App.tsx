@@ -623,9 +623,25 @@ export default function App() {
             </div>
             
             <div className="space-y-6 text-sm md:text-base text-slate-600 dark:text-slate-400 font-['Padauk'] leading-relaxed">
-              <p>1. Once the video is uploaded, the Neural Engine will automatically perform translation and voiceover simultaneously.</p>
-              <p>2. Turbo Mode ensures it is 3x faster than usual.</p>
-              <p>3. The audio file will be produced directly in the highest quality Premium WAV format, ensuring 100% satisfaction.</p>
+              <div className="space-y-2">
+                <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၁) - API Key ထည့်သွင်းခြင်း</h4>
+                <p>ဤ App ကို အသုံးပြုရန် သင်၏ ကိုယ်ပိုင် Gemini API Key လိုအပ်ပါသည်။ App စတင်ချိန်တွင် ပေါ်လာသော "Connect API Key" ခလုတ်ကို နှိပ်ပြီး သင်၏ Key ကို ချိတ်ဆက်ပါ။ Key မရှိသေးပါက "Get Free API Key" link မှတစ်ဆင့် အခမဲ့ ရယူနိုင်ပါသည်။</p>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၂) - ဗီဒီယို တင်သွင်းခြင်း</h4>
+                <p>"Import Video" နေရာတွင် သင် ဘာသာပြန်လိုသော ဗီဒီယိုဖိုင်ကို ရွေးချယ် တင်သွင်းပါ။ ဖိုင်ဆိုဒ် 70MB အထိ လက်ခံပေးပါသည်။</p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၃) - ဘာသာစကားနှင့် အသံရွေးချယ်ခြင်း</h4>
+                <p>"Choose Language" တွင် မိမိအလိုရှိသော ဘာသာစကားကို ရွေးချယ်ပါ။ "Voice Identity" တွင် အသံအမျိုးအစားကို ရွေးချယ်နိုင်ပြီး "Narrator Speed" တွင် အသံထွက်နှုန်းကို စိတ်ကြိုက် ချိန်ညှိနိုင်ပါသည်။</p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-black text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-widest">အဆင့် (၄) - ရလဒ်များ ရယူခြင်း</h4>
+                <p>Neural Engine မှ အလိုအလျောက် ဘာသာပြန်ပြီးပါက ဘာသာပြန်စာသား၊ အသံဖိုင် (Premium WAV) နှင့် Subtitle ဖိုင်များကို "Download Bundle ZIP" ခလုတ်ဖြင့် တစ်ခါတည်း ဒေါင်းလုဒ် ရယူနိုင်ပါသည်။</p>
+              </div>
             </div>
             
             <div className="pt-6 border-t dark:border-white/5 text-center">
