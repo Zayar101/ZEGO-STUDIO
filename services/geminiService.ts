@@ -69,7 +69,12 @@ export class GeminiService {
   }
 
   private getApiKey(): string {
-    return process.env.API_KEY || localStorage.getItem('zegotech_manual_api_key') || "";
+    // 1. Prioritize manual key (per computer/user)
+    const manualKey = localStorage.getItem('zegotech_manual_api_key');
+    if (manualKey) return manualKey;
+
+    // 2. Fallback to platform/environment key
+    return process.env.API_KEY || "";
   }
 
   async processVideoFull(fileBase64: string, mimeType: string, targetLanguage: TargetLanguage, durationSeconds: number): Promise<{ text: string, metadata: VideoMetadata & { english_filename_base: string } }> {

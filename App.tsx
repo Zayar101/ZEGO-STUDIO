@@ -115,22 +115,28 @@ export default function App() {
   useEffect(() => {
     const checkKey = async () => {
       try {
-        // First check manual key
+        // 1. If manual key exists in localStorage, we're good (saved on this computer)
         if (manualKey) {
           setNeedsKey(false);
           return;
         }
 
-        // Then check AI Studio platform key
+        // 2. If in AI Studio platform, check platform key
         // @ts-ignore
-        if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
-          setNeedsKey(true);
-        } else if (!window.aistudio && !manualKey) {
-          // On custom domain without manual key
-          setNeedsKey(true);
+        if (window.aistudio) {
+          const hasKey = await window.aistudio.hasSelectedApiKey();
+          if (!hasKey) {
+            setNeedsKey(true);
+          } else {
+            setNeedsKey(false);
+          }
+          return;
         }
+
+        // 3. If on custom domain and no manual key, we definitely need one
+        setNeedsKey(true);
       } catch (e) {
-        console.error("Key check failed", e);
+        console.error("ZEGOTECH: Key check failed", e);
         if (!manualKey) setNeedsKey(true);
       }
     };
