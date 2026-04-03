@@ -333,7 +333,7 @@ export default function App() {
             <div className="w-full max-w-3xl bg-white dark:bg-slate-900/40 backdrop-blur-3xl rounded-[2.5rem] p-6 md:p-10 border border-slate-200/40 dark:border-emerald-500/10 shadow-2xl space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="text-left space-y-3">
-                  <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em] ml-1">Market Locality</label>
+                  <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em] ml-1">Chose Languages</label>
                   <select className="w-full p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200 dark:border-emerald-500/10 font-bold text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none" value={options.targetLanguage} onChange={e => setOptions({...options, targetLanguage: e.target.value as TargetLanguage})}>
                     {Object.values(TargetLanguage).map(l => <option key={l} value={l}>{l}</option>)}
                   </select>
